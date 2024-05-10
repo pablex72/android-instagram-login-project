@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -44,9 +45,16 @@ fun LoginScreen(loginViewModel: LoginViewModel) {
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center), loginViewModel)
-        Footer(Modifier.align(Alignment.BottomCenter))
+        val isLoading: Boolean by loginViewModel.isLoading.observeAsState(initial = false)
+        if(isLoading){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)){ CircularProgressIndicator() }
+        }else{
+            Header(Modifier.align(Alignment.TopEnd))
+            Body(Modifier.align(Alignment.Center), loginViewModel)
+            Footer(Modifier.align(Alignment.BottomCenter))
+        }
     }
 }
 
@@ -100,7 +108,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
-        LoginButton(isLoginEnable)
+        LoginButton(isLoginEnable, loginViewModel)
         Spacer(modifier = Modifier.size(16.dp))
         LoginDivider()
         Spacer(modifier = Modifier.size(32.dp))
@@ -157,8 +165,8 @@ fun LoginDivider() {
 }
 
 @Composable
-fun LoginButton(isLoginEnable: Boolean) {
-    Button(onClick = { }, enabled = isLoginEnable, modifier = Modifier.fillMaxWidth()) {
+fun LoginButton(isLoginEnable: Boolean, loginViewModel: LoginViewModel) {
+    Button(onClick = { loginViewModel.onLoginSelected() }, enabled = isLoginEnable, modifier = Modifier.fillMaxWidth()) {
         Text(text = "Log In")
     }
 }
